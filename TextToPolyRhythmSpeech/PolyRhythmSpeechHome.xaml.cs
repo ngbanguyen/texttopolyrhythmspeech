@@ -64,7 +64,7 @@ namespace TextToPolyrhythmSpeech
 			words = text.Split(' ');
 
 			speechSynthesizer = new SpeechSynthesizer();
-			speechSynthesizer.Rate = 10;
+			speechSynthesizer.Rate = 1;
 
 			if (aTimer.Enabled)
 			{

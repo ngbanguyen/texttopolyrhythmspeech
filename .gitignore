@@ -2,3 +2,7 @@
 
 **/Debug/**
 **/Release/**
+
+*config*
+
+packages/*
