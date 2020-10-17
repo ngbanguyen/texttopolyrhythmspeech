@@ -9,8 +9,11 @@
       Title="PolyRhythmSpeechHome">
 
     <Grid>
-        <Button Content="Henlo" HorizontalAlignment="Left" Margin="631,290,0,0" VerticalAlignment="Top" Width="75"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="492,170,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="RapTextBtn"  Click="button1_Click" Content="Rap this text" HorizontalAlignment="Left" Margin="160,215,0,0" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="InputTextBox" HorizontalAlignment="Left" Height="149" Margin="107,61,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="186"/>
+        <ComboBox x:Name="rythm1" HorizontalAlignment="Left" Margin="339,72,0,0" VerticalAlignment="Top" Width="120">
+            <ListBoxItem Content="3/4"/>
+        </ComboBox>
 
     </Grid>
 </Page>
