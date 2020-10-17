@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Speech.Synthesis;
+using System.Timers;
 
 namespace TextToPolyrhythmSpeech
 {
@@ -21,14 +22,21 @@ namespace TextToPolyrhythmSpeech
     /// </summary>
     public partial class PolyRhythmSpeechHome : Page
     {
+		private static System.Timers.Timer aTimer;
+		private static SpeechSynthesizer speechSynthesizer;
+		private static String[] words;
+		private static int index = 0;
 
-        public PolyRhythmSpeechHome()
+		public PolyRhythmSpeechHome()
         {
             InitializeComponent();
-        }
+			aTimer = new System.Timers.Timer(1000);
+			aTimer.Elapsed += OnTimedEvent;
+			aTimer.AutoReset = true;
+		}
 
-        private void button1_Click(object sender, RoutedEventArgs e)
-        {
+		private void button1_Click(object sender, RoutedEventArgs e)
+		{
 			/*			PromptBuilder promptBuilder = new PromptBuilder();
 						promptBuilder.AppendText("Hello world");
 
@@ -50,13 +58,28 @@ namespace TextToPolyrhythmSpeech
 			// Just getting the selected rythm here
 			ListBoxItem selected = (ListBoxItem)rythm1.SelectedItem;
 			String rythm = (String)selected.Content;
-			
+
 			// Rap the text
 			String text = InputTextBox.Text;
-			SpeechSynthesizer speechSynthesizer = new SpeechSynthesizer();
-			PromptBuilder promptBuilder = new PromptBuilder();
-			promptBuilder.AppendText(text);
-			speechSynthesizer.Speak(promptBuilder);
+			words = text.Split(' ');
+
+			speechSynthesizer = new SpeechSynthesizer();
+			speechSynthesizer.Rate = 10;
+
+			if (aTimer.Enabled)
+			{
+				aTimer.Stop();
+			}
+			aTimer.Start();
+		}
+
+		private static void OnTimedEvent(Object source, ElapsedEventArgs e)
+		{
+			speechSynthesizer.SpeakAsync(words[index++]);
+			if (index == words.Length)
+			{
+				index = 0;
+			}
 		}
 
 	}
