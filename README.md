@@ -3,7 +3,7 @@
 
 A WPF .NET program to convert text to speech matching a [polyrhythm](https://en.wikipedia.org/wiki/Polyrhythm).
 
-![UI build](https://github.com/banguyen10111999/texttopolyrhythmspeech/tree/polyrhythm_setup/assets/UI.PNG "UI")
+![UI build](https://github.com/banguyen10111999/texttopolyrhythmspeech/blob/master/assets/UI.PNG "UI")
 
 #### Prerequisites
 - .NET Framework
