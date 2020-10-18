@@ -14,13 +14,14 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Speech.Synthesis;
 using System.Timers;
+using System.Numerics;
 
 // Pogger library
 using NHyphenator.Loaders;
 using NHyphenator;
-using System.Media;
-using System.Threading;
-using System.Net;
+
+
+
 
 namespace TextToPolyrhythmSpeech
 {
@@ -29,14 +30,14 @@ namespace TextToPolyrhythmSpeech
     /// </summary>
     public partial class PolyRhythmSpeechHome : Page
     {
-		private static System.Timers.Timer metronome1, metronome2;
+		private static System.Timers.Timer metronome;
 		private static SpeechSynthesizer speechSynthesizer;
 		private static int index = 0;
 		private static readonly int speakRate = 1;
 		private static readonly String defaultBPM = "120";
 		private static readonly int maxBPM = 200;
 		private static readonly int minBPM = 10;
-		private static Mutex mutex;
+
 		private static bool pleaseStop = false;
 		private static String[] words;
 		private static Hyphenator hyphenator = new Hyphenator(HyphenatePatternsLanguage.EnglishUs, " ");
@@ -46,16 +47,11 @@ namespace TextToPolyrhythmSpeech
         {
             InitializeComponent();
 
-			mutex = new Mutex();
 			pleaseStop = false;
 
-			metronome1 = new System.Timers.Timer();
-			metronome1.Elapsed += OnTimedEvent;
-			metronome1.AutoReset = true;
-
-			metronome2 = new System.Timers.Timer();
-			metronome2.Elapsed += OnTimedEvent;
-			metronome2.AutoReset = true;
+			metronome = new System.Timers.Timer();
+			metronome.Elapsed += OnTimedEvent;
+			metronome.AutoReset = true;
 
             speechSynthesizer = new SpeechSynthesizer
             {
@@ -93,14 +89,11 @@ namespace TextToPolyrhythmSpeech
 			// Hyphenate the text to split syllables in a normal way
 			// Instead of taking four fking seconds to say aviation
 
-			if (metronome1.Enabled)
+			if (metronome.Enabled)
             {
-				metronome1.Stop();
+				metronome.Stop();
 			}
-			if (metronome2.Enabled)
-            {
-				metronome2.Stop();
-			}
+
 			index = 0;
 			pleaseStop = false;
 
@@ -110,13 +103,13 @@ namespace TextToPolyrhythmSpeech
 
 			if (int.TryParse(BPMTextBox1.Text, out metronome1BPM) && int.TryParse(BPMTextBox2.Text, out metronome2BPM) &&
 				int.TryParse(Meter1Notes.Text, out metronome1Notes) && int.TryParse(Meter2Notes.Text, out metronome2Notes)) {
-				metronome1.Interval = 60000 / (metronome1BPM * metronome1Notes);
-				metronome2.Interval = 60000 / (metronome2BPM * metronome2Notes);
+				int notes = LCM(metronome1Notes, metronome2Notes);
+				metronome.Interval = 500 / notes;
 
-				speechSynthesizer.Rate = 1 + Math.Max(metronome1BPM, metronome2BPM) / 60;
+				// Wat now
+				speechSynthesizer.Rate = 1 + Math.Max(metronome1BPM, metronome2BPM) / 45;
 
-				metronome1.Start();
-				metronome2.Start();
+				metronome.Start();
 			}
 		}
 
@@ -124,21 +117,15 @@ namespace TextToPolyrhythmSpeech
 		{
 			if (pleaseStop)
             {
-				metronome1.Stop();
-				metronome2.Stop();
+				metronome.Stop();
 				return;
             }
-			if (mutex.WaitOne(10))
+			speechSynthesizer.SpeakAsync(words[index++]);
+			if (index >= words.Length)
             {
-				speechSynthesizer.SpeakAsync(words[index++]);
-				if (index == words.Length)
-				{
-					index = 0;
-					metronome1.Stop();
-					metronome2.Stop();
-				}
-				mutex.ReleaseMutex();
-			}
+				index = 0;
+				pleaseStop = true;
+            }
 		}
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -183,7 +170,40 @@ namespace TextToPolyrhythmSpeech
 				e.Handled = true;
 			}
 		}
-    }
 
-	public delegate string AsyncMethodCaller();
+		int LCM(int a, int b)
+		{
+			int larger = (a > b) ? a : b;
+			int smaller = (a > b) ? b : a;
+			int candidate = larger;
+			while (candidate % smaller != 0)
+            {
+				candidate += larger;
+            }
+			return candidate;
+		}
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+			PromptBuilder promptBuilder = new PromptBuilder();
+			promptBuilder.AppendText("Hello world");
+			TimeSpan break1 = new TimeSpan(50);
+
+			PromptStyle promptStyle = new PromptStyle();
+			promptStyle.Volume = PromptVolume.Soft;
+			promptStyle.Rate = PromptRate.Slow;
+			promptBuilder.StartStyle(promptStyle);
+			promptBuilder.AppendText("and");
+			promptBuilder.AppendBreak(break1);
+			promptBuilder.AppendText("and");
+			promptBuilder.AppendBreak(break1);
+			promptBuilder.AppendText("and");
+			promptBuilder.AppendBreak(break1);
+			promptBuilder.AppendText("and");
+			promptBuilder.AppendBreak(break1);
+			promptBuilder.EndStyle();
+
+			speechSynthesizer.Speak(promptBuilder);
+		}
+	}
 }
