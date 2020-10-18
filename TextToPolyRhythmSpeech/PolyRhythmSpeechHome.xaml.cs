@@ -106,8 +106,13 @@ namespace TextToPolyrhythmSpeech
 				int notes = LCM(metronome1Notes, metronome2Notes);
 				metronome.Interval = 500 / notes;
 
-				// Wat now
-				speechSynthesizer.Rate = 1 + Math.Max(metronome1BPM, metronome2BPM) / 45;
+				// Should have another way ? Rate maximum is 10
+				int ratePlus = Math.Max(metronome1BPM, metronome2BPM) / 60;
+				if (ratePlus > 9)
+				{
+					ratePlus = 9;
+				}
+				speechSynthesizer.Rate = 1 + ratePlus;
 
 				metronome.Start();
 			}
@@ -131,17 +136,18 @@ namespace TextToPolyrhythmSpeech
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 			pleaseStop = true;
+			speechSynthesizer.SpeakAsyncCancelAll();
 			index = 0;
 		}
 
-        // Filtering key input to only key number
-        private void BPMTextBox_KeyDown(object sender, KeyEventArgs e)
+		// Filtering key input to only key number
+		private void BPMTextBox_KeyDown(object sender, KeyEventArgs e)
         {
 			if (sender != BPMTextBox1 || sender != BPMTextBox2)
-            {
-				// Wat
+			{
+				// wat
 				return;
-            }
+			}
 			TextBox textBox = (TextBox) sender;
 			bool isNumeric = (e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9);
 			bool isIncr = (e.Key == Key.Add);
