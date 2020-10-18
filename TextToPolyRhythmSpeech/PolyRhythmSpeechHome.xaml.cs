@@ -144,6 +144,7 @@ namespace TextToPolyrhythmSpeech
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 			pleaseStop = true;
+			speechSynthesizer.SpeakAsyncCancelAll();
 			index = 0;
 		}
 
