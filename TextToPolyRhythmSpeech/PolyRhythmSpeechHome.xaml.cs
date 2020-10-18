@@ -19,9 +19,7 @@ using System.Numerics;
 // Pogger library
 using NHyphenator.Loaders;
 using NHyphenator;
-
-
-
+using System.Text.RegularExpressions;
 
 namespace TextToPolyrhythmSpeech
 {
@@ -30,28 +28,18 @@ namespace TextToPolyrhythmSpeech
     /// </summary>
     public partial class PolyRhythmSpeechHome : Page
     {
-		private static System.Timers.Timer metronome;
 		private static SpeechSynthesizer speechSynthesizer;
-		private static int index = 0;
 		private static readonly int speakRate = 1;
-		private static readonly String defaultBPM = "120";
-		private static readonly int maxBPM = 200;
-		private static readonly int minBPM = 10;
-
-		private static bool pleaseStop = false;
+		private static readonly int defaultBPM = 120;
+		private static readonly int maxBPM = 240;
+		private static readonly int minBPM = 60;
+		private static readonly int defaultTimeSpan = 2500; // 100 nanoseconds
 		private static String[] words;
 		private static Hyphenator hyphenator = new Hyphenator(HyphenatePatternsLanguage.EnglishUs, " ");
-
 
 		public PolyRhythmSpeechHome()
         {
             InitializeComponent();
-
-			pleaseStop = false;
-
-			metronome = new System.Timers.Timer();
-			metronome.Elapsed += OnTimedEvent;
-			metronome.AutoReset = true;
 
             speechSynthesizer = new SpeechSynthesizer
             {
@@ -62,92 +50,66 @@ namespace TextToPolyrhythmSpeech
 		[Obsolete]
         private void Button1_Click(object sender, RoutedEventArgs e)
 		{
-			/*			PromptBuilder promptBuilder = new PromptBuilder();
-						promptBuilder.AppendText("Hello world");
+			InputTextBox.Text = hyphenator.HyphenateText(InputTextBox.Text);
+			words = InputTextBox.Text.Split(' ');
 
-						PromptStyle promptStyle = new PromptStyle();
-						promptStyle.Volume = PromptVolume.Soft;
-						promptStyle.Rate = PromptRate.Slow;
-						promptBuilder.StartStyle(promptStyle);
-						promptBuilder.AppendText("and hello to the universe too.");
-						promptBuilder.EndStyle();
+			int metronome1Notes, metronome2Notes;
 
-						promptBuilder.AppendText("On this day, ");
-						promptBuilder.AppendTextWithHint(DateTime.Now.ToShortDateString(), SayAs.Date);
-
-						promptBuilder.AppendText(", we're gathered here to learn");
-						promptBuilder.AppendText("all", PromptEmphasis.Strong);
-						promptBuilder.AppendText("about");
-						promptBuilder.AppendTextWithHint("WPF", SayAs.SpellOut);*/
-
-			// Just getting the selected rythm here
-			// ListBoxItem selected = (ListBoxItem)rythm1.SelectedItem;
-			// String rythm = (String)selected.Content;
-
-			// Rap the text
-
-			// Hyphenate the text to split syllables in a normal way
-			// Instead of taking four fking seconds to say aviation
-
-			if (metronome.Enabled)
-            {
-				metronome.Stop();
-			}
-
-			index = 0;
-			pleaseStop = false;
-
-			words = hyphenator.HyphenateText(InputTextBox.Text).Split(' ');
-
-			int metronome1BPM, metronome2BPM, metronome1Notes, metronome2Notes;
-
-			if (int.TryParse(BPMTextBox1.Text, out metronome1BPM) && int.TryParse(BPMTextBox2.Text, out metronome2BPM) &&
-				int.TryParse(Meter1Notes.Text, out metronome1Notes) && int.TryParse(Meter2Notes.Text, out metronome2Notes)) {
+			if (int.TryParse(Meter1Notes.Text, out metronome1Notes) && int.TryParse(Meter2Notes.Text, out metronome2Notes)) {
 				int notes = LCM(metronome1Notes, metronome2Notes);
-				metronome.Interval = 500 / notes;
+				List<int> beat = new List<int>();
 
-				// Should have another way ? Rate maximum is 10
-				int ratePlus = Math.Max(metronome1BPM, metronome2BPM) / 60;
-				if (ratePlus > 9)
+				for (int i = 0; i < notes; ++i)
+                {
+					if (i % metronome1Notes == 0 || i % metronome2Notes == 0)
+                    {
+						beat.Add(i);
+                    }
+                }
+
+				List<TimeSpan> space = new List<TimeSpan>();
+				for (int i = 0; i < beat.Count - 1; ++i)
+                {
+					space.Add(new TimeSpan(defaultTimeSpan * (beat[i + 1] - beat[i])));
+                }
+				space.Add(new TimeSpan(defaultTimeSpan * (notes - beat[beat.Count - 1])));
+
+				PromptBuilder promptBuilder = new PromptBuilder();
+
+				PromptStyle promptStyle = new PromptStyle();
+				promptStyle.Volume = PromptVolume.Soft;
+				promptStyle.Rate = PromptRate.Medium;
+				promptBuilder.StartStyle(promptStyle);
+
+				// Not the best at splitting but it works
+				// P E O P L E
+				words = hyphenator.HyphenateText(InputTextBox.Text).Split(' ');
+
+				int timespanIndex = 0;
+				foreach (string s in words)
 				{
-					ratePlus = 9;
+					promptBuilder.AppendText(s);
+					promptBuilder.AppendBreak(space[timespanIndex++]);
+					if (timespanIndex >= space.Count())
+                    {
+						timespanIndex = 0;
+                    }
 				}
-				speechSynthesizer.Rate = 1 + ratePlus;
 
-				metronome.Start();
+				promptBuilder.EndStyle();
+
+				speechSynthesizer.SpeakAsync(promptBuilder);
 			}
-		}
-
-		private static void OnTimedEvent(Object source, ElapsedEventArgs e)
-		{
-			if (pleaseStop)
-            {
-				metronome.Stop();
-				return;
-            }
-			speechSynthesizer.SpeakAsync(words[index++]);
-			if (index >= words.Length)
-            {
-				index = 0;
-				pleaseStop = true;
-            }
 		}
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-			pleaseStop = true;
 			speechSynthesizer.SpeakAsyncCancelAll();
-			index = 0;
 		}
 
 		// Filtering key input to only key number
 		private void BPMTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-			if (sender != BPMTextBox1 || sender != BPMTextBox2)
-			{
-				// wat
-				return;
-			}
 			TextBox textBox = (TextBox) sender;
 			bool isNumeric = (e.Key >= Key.D0 && e.Key <= Key.D9) || (e.Key >= Key.NumPad0 && e.Key <= Key.NumPad9);
 			bool isIncr = (e.Key == Key.Add);
@@ -156,7 +118,7 @@ namespace TextToPolyrhythmSpeech
             {
 				if (isIncr || isDecr)
                 {
-					string original = BPMTextBox1.Text;
+					string original = textBox.Text;
 					int result;
 					if (int.TryParse(original, out result))
                     {
@@ -166,7 +128,7 @@ namespace TextToPolyrhythmSpeech
 					} else
                     {
 						// Paranoid
-						textBox.Text = defaultBPM;
+						textBox.Text = defaultBPM.ToString();
 					}
 					// Prevents default handler action after this
 					e.Handled = true;
@@ -187,29 +149,6 @@ namespace TextToPolyrhythmSpeech
 				candidate += larger;
             }
 			return candidate;
-		}
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-			PromptBuilder promptBuilder = new PromptBuilder();
-			promptBuilder.AppendText("Hello world");
-			TimeSpan break1 = new TimeSpan(50);
-
-			PromptStyle promptStyle = new PromptStyle();
-			promptStyle.Volume = PromptVolume.Soft;
-			promptStyle.Rate = PromptRate.Slow;
-			promptBuilder.StartStyle(promptStyle);
-			promptBuilder.AppendText("and");
-			promptBuilder.AppendBreak(break1);
-			promptBuilder.AppendText("and");
-			promptBuilder.AppendBreak(break1);
-			promptBuilder.AppendText("and");
-			promptBuilder.AppendBreak(break1);
-			promptBuilder.AppendText("and");
-			promptBuilder.AppendBreak(break1);
-			promptBuilder.EndStyle();
-
-			speechSynthesizer.Speak(promptBuilder);
 		}
 	}
 }

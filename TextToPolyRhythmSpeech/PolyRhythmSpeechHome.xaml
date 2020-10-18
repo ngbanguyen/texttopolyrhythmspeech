@@ -5,23 +5,20 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:TextToPolyrhythmSpeech"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="400" d:DesignWidth="800"
       Title="PolyRhythmSpeechHome">
 
     <Grid>
-        <Button x:Name="RapTextBtn"  Click="Button1_Click" Content="Rap this text" HorizontalAlignment="Left" Margin="131,259,0,0" VerticalAlignment="Top" Width="75"/>
-        <TextBox x:Name="InputTextBox" HorizontalAlignment="Left" Height="163" Margin="26,61,0,0" TextWrapping="Wrap" Text="Insert copypasta here" VerticalAlignment="Top" Width="430" FontSize="14"/>
-
-        <TextBox x:Name="BPMTextBox1" HorizontalAlignment="Left" Height="25" Margin="616,102,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63" FontSize="14" KeyDown="BPMTextBox_KeyDown" Text="120" Background="White" TextAlignment="Center" MaxLength="3" MaxLines="1" RenderTransformOrigin="0.912,0.494"/>
-        <Label Content="Metronome 1" HorizontalAlignment="Left" Margin="476,102,0,0" VerticalAlignment="Top"/>
-        <Label Content="Metronome 2" HorizontalAlignment="Left" Margin="476,189,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="BPMTextBox2" HorizontalAlignment="Left" Height="25" Margin="616,191,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63" FontSize="14" KeyDown="BPMTextBox_KeyDown" Text="120" Background="White" TextAlignment="Center" MaxLength="3" MaxLines="1"/>
-        <Button x:Name="StahpButton" Content="Stahp" HorizontalAlignment="Left" Margin="267,259,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-        <TextBox x:Name="Meter2Notes" HorizontalAlignment="Left" Height="25" Margin="703,190,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63" FontSize="14" KeyDown="BPMTextBox_KeyDown" Text="4" Background="White" TextAlignment="Center" MaxLength="1" MaxLines="1" RenderTransformOrigin="0.912,0.494"/>
-        <TextBox x:Name="Meter1Notes" HorizontalAlignment="Left" Height="25" Margin="703,102,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63" FontSize="14" KeyDown="BPMTextBox_KeyDown" Text="4" Background="White" TextAlignment="Center" MaxLength="1" MaxLines="1" RenderTransformOrigin="0.912,0.494"/>
-        <Label Content="BPM" HorizontalAlignment="Left" Margin="630,65,0,0" VerticalAlignment="Top"/>
-        <Label Content="Notes" HorizontalAlignment="Left" Margin="714,65,0,0" VerticalAlignment="Top"/>
-        <Button Content="Tests" HorizontalAlignment="Left" Margin="616,301,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>
+        <Button x:Name="RapTextBtn"  Click="Button1_Click" Content="Generate rap" HorizontalAlignment="Left" Margin="125,275,0,0" VerticalAlignment="Top" Width="75"/>
+        <TextBox x:Name="InputTextBox" HorizontalAlignment="Left" Height="163" Margin="40,90,0,0" TextWrapping="Wrap" Text="Insert copypasta here" VerticalAlignment="Top" Width="430" FontSize="14"/>
+        <Label Content="Rhythm 1" HorizontalAlignment="Left" Margin="500,125,0,0" VerticalAlignment="Top"/>
+        <Label Content="Rhythm 2 " HorizontalAlignment="Left" Margin="500,205,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Meter2Notes" HorizontalAlignment="Left" Height="25" Margin="650,206,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63" FontSize="14" KeyDown="BPMTextBox_KeyDown" Text="3" Background="White" TextAlignment="Center" MaxLength="1" MaxLines="1" RenderTransformOrigin="0.912,0.494"/>
+        <TextBox x:Name="Meter1Notes" HorizontalAlignment="Left" Height="25" Margin="650,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63" FontSize="14" KeyDown="BPMTextBox_KeyDown" Text="2" Background="White" TextAlignment="Center" MaxLength="1" MaxLines="1" RenderTransformOrigin="0.912,0.494"/>
+        <Label x:Name="title" Content="Text to Polyrhythm Speech" HorizontalAlignment="Left" Margin="241,26,0,0" VerticalAlignment="Top" Width="341"
+               FontWeight="Bold" FontSize="24"/>
+        <Button x:Name="RapTextBtn_Copy"  Click="Button_Click" Content="Stahp" HorizontalAlignment="Left" Margin="310,275,0,0" VerticalAlignment="Top" Width="75"/>
+        <Label Content="Made by BKBois @ UQCS Hackathon 2020" HorizontalAlignment="Left" Margin="400,350,0,0" VerticalAlignment="Top" Width="390" Height="36" FontSize="20"/>
 
     </Grid>
 </Page>

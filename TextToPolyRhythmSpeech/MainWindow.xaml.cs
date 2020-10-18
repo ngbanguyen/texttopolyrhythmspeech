@@ -23,6 +23,7 @@ namespace TextToPolyrhythmSpeech
         public MainWindow()
         {
             InitializeComponent();
+            ShowsNavigationUI = false;
         }
     }
 }
