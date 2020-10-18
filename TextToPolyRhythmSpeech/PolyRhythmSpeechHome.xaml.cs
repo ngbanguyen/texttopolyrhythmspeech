@@ -50,8 +50,7 @@ namespace TextToPolyrhythmSpeech
 		[Obsolete]
         private void Button1_Click(object sender, RoutedEventArgs e)
 		{
-			InputTextBox.Text = hyphenator.HyphenateText(InputTextBox.Text);
-			words = InputTextBox.Text.Split(' ');
+			words = hyphenator.HyphenateText(InputTextBox.Text).Split(' ');
 
 			int metronome1Notes, metronome2Notes;
 

@@ -13,8 +13,8 @@
         <TextBox x:Name="InputTextBox" HorizontalAlignment="Left" Height="163" Margin="40,90,0,0" TextWrapping="Wrap" Text="Insert copypasta here" VerticalAlignment="Top" Width="430" FontSize="14"/>
         <Label Content="Rhythm 1" HorizontalAlignment="Left" Margin="500,125,0,0" VerticalAlignment="Top"/>
         <Label Content="Rhythm 2 " HorizontalAlignment="Left" Margin="500,205,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="Meter2Notes" HorizontalAlignment="Left" Height="25" Margin="650,206,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63" FontSize="14" KeyDown="BPMTextBox_KeyDown" Text="3" Background="White" TextAlignment="Center" MaxLength="1" MaxLines="1" RenderTransformOrigin="0.912,0.494"/>
-        <TextBox x:Name="Meter1Notes" HorizontalAlignment="Left" Height="25" Margin="650,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63" FontSize="14" KeyDown="BPMTextBox_KeyDown" Text="2" Background="White" TextAlignment="Center" MaxLength="1" MaxLines="1" RenderTransformOrigin="0.912,0.494"/>
+        <TextBox x:Name="Meter2Notes" HorizontalAlignment="Left" Height="25" Margin="650,206,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63" FontSize="14" KeyDown="BPMTextBox_KeyDown" Text="3" Background="White" TextAlignment="Center" MaxLength="2" MaxLines="1" RenderTransformOrigin="0.912,0.494"/>
+        <TextBox x:Name="Meter1Notes" HorizontalAlignment="Left" Height="25" Margin="650,125,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63" FontSize="14" KeyDown="BPMTextBox_KeyDown" Text="2" Background="White" TextAlignment="Center" MaxLength="2" MaxLines="1" RenderTransformOrigin="0.912,0.494"/>
         <Label x:Name="title" Content="Text to Polyrhythm Speech" HorizontalAlignment="Left" Margin="241,26,0,0" VerticalAlignment="Top" Width="341"
                FontWeight="Bold" FontSize="24"/>
         <Button x:Name="RapTextBtn_Copy"  Click="Button_Click" Content="Stahp" HorizontalAlignment="Left" Margin="310,275,0,0" VerticalAlignment="Top" Width="75"/>
